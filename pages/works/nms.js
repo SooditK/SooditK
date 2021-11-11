@@ -30,7 +30,7 @@ const Work = () => (
         </ListItem>
         <ListItem>
           <Meta>Stack</Meta>
-          <span>Objective-C, PHP, MongoDB</span>
+          <span>NEAR Blockchain, Javascript</span>
         </ListItem>
       </List>
 
