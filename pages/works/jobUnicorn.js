@@ -18,8 +18,8 @@ const Work = () => (
       <List ml={4} my={4}>
         <ListItem>
           <Meta>Website</Meta>
-          <Link href="https://jobunicorn.tech/">
-            https://jobunicorn.tech/ <ExternalLinkIcon mx="2px" />
+          <Link href="https://jobunicorn.io/">
+            https://jobunicorn.io/ <ExternalLinkIcon mx="2px" />
           </Link>
         </ListItem>
         <ListItem>
