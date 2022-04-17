@@ -3,6 +3,7 @@ import Layout from '../components/layouts/article'
 import Section from '../components/section'
 import { WorkGridItem } from '../components/grid-item'
 
+import trax from '../public/images/works/trax4.png'
 import jobUnicorn from '../public/images/works/jobUnicorn.png'
 import nearmessaging from '../public/images/works/nms.png'
 import trepare from '../public/images/works/trepare.png'
@@ -20,6 +21,12 @@ const Works = () => (
       </Heading>
 
       <SimpleGrid columns={[1, 1, 2]} gap={6}>
+        <Section>
+          <WorkGridItem id="trax" title="Trax" thumbnail={trax}>
+            Trax is an open source Spotify Clone built with NextJS &amp; Chakra
+            UI. Allows users to create playlists and let users play music.
+          </WorkGridItem>
+        </Section>
         <Section>
           <WorkGridItem
             id="jobUnicorn"

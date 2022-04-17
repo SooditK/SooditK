@@ -106,8 +106,8 @@ const Home = () => (
           I ♥
         </Heading>
         <Paragraph>
-          Web Development, App Development, Machine Learning, DevOps, Art, Music
-          &amp; Photography.
+          Web Development, DevOps Enthusiast, App Development, Music, Art &amp;
+          Photography.
         </Paragraph>
       </Section>
 
