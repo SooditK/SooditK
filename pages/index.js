@@ -177,7 +177,7 @@ const Home = () => (
         </List>
         <Box align="center" my={4}>
           <NextLink
-            href="https://drive.google.com/file/d/1IJts9PtarDK-l_RXEJzWZzHpltlqQMZI/view?usp=sharing"
+            href="https://drive.google.com/file/d/1LQvKvDEkhexHuKOFHpR3bzVl9rJK9XGc/view?usp=sharing"
             target="_blank"
           >
             <Button rightIcon={<ChevronRightIcon />} colorScheme="teal">
