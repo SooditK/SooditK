@@ -75,7 +75,7 @@ const Navbar = props => {
             Works
           </LinkItem>
           <LinkItem
-            href="https://drive.google.com/file/d/1IJts9PtarDK-l_RXEJzWZzHpltlqQMZI/view?usp=sharing"
+            href="https://drive.google.com/file/d/1LQvKvDEkhexHuKOFHpR3bzVl9rJK9XGc/view"
             path={path}
           >
             My Resume
