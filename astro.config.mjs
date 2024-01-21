@@ -5,7 +5,7 @@ import mdx from "@astrojs/mdx";
 import vercel from "@astrojs/vercel/serverless";
 import lottie from "astro-integration-lottie";
 import sitemap from "@astrojs/sitemap";
-
+// import cloudflare from "@astrojs/cloudflare";
 const SERVER_PORT = 3000;
 // the url to access your blog during local
 const LOCALHOST_URL = `http://localhost:${SERVER_PORT}`;
@@ -22,7 +22,9 @@ if (isBuild) {
 
 // https://astro.build/config
 export default defineConfig({
-  server: { port: SERVER_PORT },
+  server: {
+    port: SERVER_PORT,
+  },
   markdown: {
     shikiConfig: {
       theme: "github-dark-dimmed",
@@ -47,4 +49,6 @@ export default defineConfig({
       exclude: ["globby"],
     },
   },
+  // output: "server",
+  // adapter: cloudflare()
 });
