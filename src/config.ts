@@ -1,4 +1,4 @@
-export const SITE_TITLE = "💀";
+export const SITE_TITLE = "🦀";
 export const SITE_DESCRIPTION =
   "I have internet access & I press buttons on keyboard and wait for computer to do things. I use NeoVim & Arch btw.";
 
