@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    @apply flex min-h-screen w-full flex-col bg-zinc-900 font-light text-white selection:bg-amber-200 selection:bg-opacity-90 selection:text-black;
+  }
+
+  main {
+    @apply mx-auto w-full;
+  }
+
+  a {
+    @apply text-zinc-400 underline decoration-transparent underline-offset-4 transition hover:text-white hover:decoration-amber-200;
+  }
+
+  .before-style {
+    @apply absolute top-0 left-0 -translate-x-full px-1 font-medium text-slate-600;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply relative my-1 font-medium tracking-wide;
+  }
+
+  article h1 {
+    @apply mt-6 mb-3 text-3xl font-bold;
+  }
+  article h2 {
+    @apply mt-8 mb-3 text-2xl font-semibold;
+  }
+  article :is(h3, h4, h5, h6) {
+    @apply mt-6 mb-3 text-lg;
+  }
+  article p {
+    @apply my-3;
+  }
+
+  :not(p, li) h1::before {
+    @apply before-style;
+  }
+
+  :not(p, li) h2::before {
+    @apply before-style;
+  }
+
+  :not(p, li) h3::before {
+    @apply before-style;
+  }
+
+  :not(p, li) h4::before {
+    @apply before-style;
+  }
+
+  :not(p, li) h5::before {
+    @apply before-style;
+  }
+
+  p {
+    @apply my-2;
+  }
+
+  li {
+    @apply relative my-0.5;
+  }
+  ul,
+  ol {
+    @apply my-1;
+  }
+  ul > li::before {
+    content: "=>";
+    @apply before-style;
+  }
+  ol {
+    list-style-type: decimal;
+  }
+  ol > li::marker {
+    @apply before-style;
+  }
+
+  code {
+    @apply mx-0.5 font-normal;
+  }
+  code::before,
+  code::after {
+    content: "`";
+  }
+  pre {
+    @apply whitespace-pre-wrap rounded py-2 px-3 text-sm;
+  }
+  pre code::before,
+  pre code::after {
+    content: "";
+  }
+
+  blockquote {
+    @apply border-l-2 border-slate-600 py-1 pl-4;
+  }
+  blockquote p {
+    @apply my-0;
+  }
+
+  hr {
+    @apply border-zinc-700;
+  }
+}
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
