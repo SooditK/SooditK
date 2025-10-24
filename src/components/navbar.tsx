@@ -25,7 +25,7 @@ export default function Navbar() {
 										buttonVariants({ variant: "ghost", size: "icon" }),
 										"size-12",
 									)}
-									to={item.href}
+									to={item.href.toString()}
 								>
 									<item.icon className="size-4" />
 								</Link>
@@ -48,7 +48,7 @@ export default function Navbar() {
 											buttonVariants({ variant: "ghost", size: "icon" }),
 											"size-12",
 										)}
-										to={social.url}
+										to={social.url.toString()}
 									>
 										<social.icon className="size-4" />
 									</Link>
