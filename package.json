@@ -58,6 +58,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.2.4",
     "@cloudflare/vite-plugin": "^1.13.15",
+    "@tanstack/devtools-vite": "^0.3.10",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/react": "^16.2.0",
     "@types/node": "^22.10.2",
