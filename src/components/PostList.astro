@@ -1,0 +1,31 @@
+---
+import type { CollectionEntry } from "astro:content";
+import FormattedDate from "@/components/FormattedDate.astro";
+
+interface Props {
+  posts: CollectionEntry<"blog">[];
+}
+
+const { posts } = Astro.props;
+---
+
+<ul class="flex flex-col">
+  {
+    posts.map((post) => (
+      <li>
+        <a
+          href={`/blog/${post.id}`}
+          class="group flex items-baseline justify-between gap-4 border-b border-line py-3"
+        >
+          <span class="text-foreground transition-colors group-hover:text-muted">
+            {post.data.title}
+          </span>
+          <FormattedDate
+            date={post.data.publishedAt}
+            class="shrink-0 text-sm text-faint tabular-nums"
+          />
+        </a>
+      </li>
+    ))
+  }
+</ul>
