@@ -1,13 +1,16 @@
-node_modules
-.DS_Store
-dist
-dist-ssr
-*.local
-count.txt
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# environment variables
 .env
-.nitro
-.tanstack
-.wrangler
-.output
-.vinxi
-todos.json
+.env.production
+
+# macOS
+.DS_Store
+
+# wrangler
+.wrangler/

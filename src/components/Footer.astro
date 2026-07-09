@@ -1,0 +1,26 @@
+---
+import { SITE, SOCIALS } from "@/data/site";
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-line py-8">
+  <div class="flex flex-col gap-3 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
+    <p>© {year} {SITE.name}</p>
+    <nav class="flex gap-4">
+      {
+        SOCIALS.map(({ label, href }) => (
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="transition-colors hover:text-foreground"
+          >
+            {label}
+          </a>
+        ))
+      }
+      <a href="/rss.xml" class="transition-colors hover:text-foreground">RSS</a>
+    </nav>
+  </div>
+</footer>

@@ -1,0 +1,88 @@
+@import "tailwindcss";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme {
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, SFMono-Regular, Menlo,
+    Consolas, "Liberation Mono", monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-surface: var(--surface);
+}
+
+:root {
+  --background: oklch(99.11% 0 0);
+  --foreground: oklch(20.46% 0.005 260);
+  --muted: oklch(50.21% 0.01 260);
+  --faint: oklch(70% 0.008 260);
+  --line: oklch(92.76% 0.003 260);
+  --surface: oklch(97.02% 0.002 260);
+}
+
+[data-theme="dark"] {
+  --background: oklch(17.76% 0.004 260);
+  --foreground: oklch(93.02% 0.004 260);
+  --muted: oklch(65.03% 0.008 260);
+  --faint: oklch(48% 0.008 260);
+  --line: oklch(27.51% 0.005 260);
+  --surface: oklch(21.78% 0.004 260);
+}
+
+html {
+  color-scheme: light;
+  scrollbar-gutter: stable;
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-background text-foreground font-sans antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: color-mix(in oklch, var(--foreground) 12%, transparent);
+}
+
+/* Shiki dual-theme code blocks (defaultColor: false) */
+.astro-code,
+.astro-code span {
+  color: var(--shiki-light);
+  background-color: var(--shiki-light-bg);
+}
+
+[data-theme="dark"] .astro-code,
+[data-theme="dark"] .astro-code span {
+  color: var(--shiki-dark);
+  background-color: var(--shiki-dark-bg);
+}
+
+/* Prose tuning for blog posts */
+.prose {
+  @apply max-w-none;
+}
+
+.prose :where(code):not(:where(pre code))::before,
+.prose :where(code):not(:where(pre code))::after {
+  content: none;
+}
+
+.prose :where(code):not(:where(pre code)) {
+  @apply rounded bg-surface border border-line px-1 py-0.5 font-normal text-[0.85em];
+}
+
+.prose :where(pre) {
+  @apply rounded-lg border border-line px-4 py-3 text-sm leading-relaxed;
+}

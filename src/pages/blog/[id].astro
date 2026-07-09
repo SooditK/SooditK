@@ -1,0 +1,76 @@
+---
+import { getCollection, render } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import Base from "@/layouts/Base.astro";
+import FormattedDate from "@/components/FormattedDate.astro";
+import { SITE } from "@/data/site";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { id: post.id },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<"blog">;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+const words = post.body?.split(/\s+/).filter(Boolean).length ?? 0;
+const readingMinutes = Math.max(1, Math.round(words / 200));
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: post.data.title,
+  description: post.data.description,
+  datePublished: post.data.publishedAt.toISOString(),
+  ...(post.data.updatedAt && {
+    dateModified: post.data.updatedAt.toISOString(),
+  }),
+  author: { "@type": "Person", name: SITE.name, url: SITE.url },
+  mainEntityOfPage: new URL(`/blog/${post.id}`, SITE.url).href,
+  ...(post.data.tags.length > 0 && { keywords: post.data.tags.join(", ") }),
+};
+---
+
+<Base
+  title={post.data.title}
+  description={post.data.description}
+  article={{
+    publishedAt: post.data.publishedAt,
+    updatedAt: post.data.updatedAt,
+    tags: post.data.tags,
+  }}
+  jsonLd={jsonLd}
+>
+  <article>
+    <header>
+      <h1 class="text-2xl font-semibold tracking-tight text-balance">
+        {post.data.title}
+      </h1>
+      <div class="mt-2 flex items-center gap-2 text-sm text-faint">
+        <FormattedDate date={post.data.publishedAt} />
+        <span aria-hidden="true">·</span>
+        <span>{readingMinutes} min read</span>
+      </div>
+    </header>
+    <div
+      class="prose prose-neutral dark:prose-invert mt-8 prose-headings:tracking-tight prose-a:underline-offset-4"
+    >
+      <Content />
+    </div>
+  </article>
+  <nav class="mt-12 border-t border-line pt-6">
+    <a
+      href="/blog"
+      class="text-sm text-muted transition-colors hover:text-foreground"
+    >
+      ← All posts
+    </a>
+  </nav>
+</Base>

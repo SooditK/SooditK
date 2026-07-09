@@ -1,0 +1,127 @@
+---
+import { getCollection } from "astro:content";
+import Base from "@/layouts/Base.astro";
+import PostList from "@/components/PostList.astro";
+import { PROJECTS, SITE, SOCIALS, WORK } from "@/data/site";
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft))
+  .sort((a, b) => b.data.publishedAt.valueOf() - a.data.publishedAt.valueOf())
+  .slice(0, 3);
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: SITE.name,
+  url: SITE.url,
+  jobTitle: "Senior Software Engineer",
+  worksFor: { "@type": "Organization", name: "Genloop", url: "https://genloop.ai" },
+  address: { "@type": "PostalAddress", addressLocality: "New Delhi", addressCountry: "IN" },
+  sameAs: SOCIALS.filter((s) => !s.href.startsWith("mailto:")).map((s) => s.href),
+};
+---
+
+<Base jsonLd={jsonLd}>
+  <section>
+    <h1 class="text-2xl font-semibold tracking-tight">{SITE.name}</h1>
+    <p class="mt-1 text-muted">Senior Software Engineer at Genloop</p>
+    <p class="mt-5 leading-relaxed text-muted">
+      Polyglot software engineer based in New Delhi, with a passion for building
+      scalable and efficient systems. I work across the stack — from frontend
+      to infrastructure — and write about software engineering and AI.
+    </p>
+  </section>
+
+  <section class="mt-14">
+    <h2 class="text-sm font-medium uppercase tracking-widest text-faint">Work</h2>
+    <ol class="mt-4 flex flex-col gap-6">
+      {
+        WORK.map((job) => (
+          <li>
+            <div class="flex items-baseline justify-between gap-4">
+              <h3 class="font-medium">
+                {job.href ? (
+                  <a
+                    href={job.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="transition-colors hover:text-muted"
+                  >
+                    {job.company}
+                  </a>
+                ) : (
+                  job.company
+                )}
+              </h3>
+              <span class="shrink-0 text-sm text-faint tabular-nums">
+                {job.start}–{job.end ?? "now"}
+              </span>
+            </div>
+            <p class="text-sm text-muted">{job.title}</p>
+            <p class="mt-1 text-sm leading-relaxed text-muted">{job.description}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="mt-14">
+    <h2 class="text-sm font-medium uppercase tracking-widest text-faint">Projects</h2>
+    <ul class="mt-4 flex flex-col gap-5">
+      {
+        PROJECTS.map((project) => (
+          <li>
+            <h3 class="font-medium">
+              <a
+                href={project.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="transition-colors hover:text-muted"
+              >
+                {project.name}
+              </a>
+            </h3>
+            <p class="mt-0.5 text-sm leading-relaxed text-muted">
+              {project.description}
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  {
+    posts.length > 0 && (
+      <section class="mt-14">
+        <h2 class="text-sm font-medium uppercase tracking-widest text-faint">
+          Writing
+        </h2>
+        <div class="mt-2">
+          <PostList posts={posts} />
+        </div>
+        <a
+          href="/blog"
+          class="mt-4 inline-block text-sm text-muted transition-colors hover:text-foreground"
+        >
+          All posts →
+        </a>
+      </section>
+    )
+  }
+
+  <section class="mt-14">
+    <h2 class="text-sm font-medium uppercase tracking-widest text-faint">Contact</h2>
+    <p class="mt-4 leading-relaxed text-muted">
+      Want to chat? Shoot me a DM <a
+        href="https://x.com/SooditK"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="text-foreground underline decoration-line underline-offset-4 transition-colors hover:decoration-foreground"
+        >on X</a
+      > or email me at <a
+        href={`mailto:${SITE.email}`}
+        class="text-foreground underline decoration-line underline-offset-4 transition-colors hover:decoration-foreground"
+        >{SITE.email}</a
+      >. I'll respond whenever I can.
+    </p>
+  </section>
+</Base>
