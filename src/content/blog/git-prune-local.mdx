@@ -1,0 +1,155 @@
+---
+title: "My local branches were a graveyard"
+description: "Coding agents leave a graveyard of dead local branches behind. Here's the tiny git command I wrote to bury them all at once — and how to steal it."
+publishedAt: 2026-07-09
+tags: ["git", "shell", "workflow"]
+---
+
+I ran `git branch` the other day and stopped counting somewhere in the thirties.
+
+None of them were alive. Every one had already been merged, closed, or abandoned weeks ago. The remote knew this — GitHub deleted its copy the moment each PR merged. My laptop never got the memo. It was still holding a vigil for `fix/typo-in-footer` from three sprints ago.
+
+Some of that is just how I work. A lot of it, lately, is agents. I let coding agents run against a branch, they open a PR, the PR merges, the remote branch disappears, and a fresh little corpse shows up in my local list. Do that a few times a day for a couple of weeks and `git branch` becomes a graveyard you have to scroll past to find the one branch you actually care about.
+
+For a while I dealt with it the honest, stupid way: `git branch -D some-dead-branch`, one at a time, squinting each time to make sure I wasn't deleting something I still needed. It works. It's also exactly the kind of chore a computer should be doing for me. So one evening I stopped squinting and wrote a script.
+
+## What "stale" actually means
+
+Before you delete anything, you have to define the thing you're deleting. "Old" is the wrong word. A branch I haven't touched in a month might still be perfectly alive. The word I want is *gone*.
+
+When you push a branch, Git remembers which remote branch it tracks — its upstream. When that remote branch later gets deleted (on merge, usually), the local branch is left pointing at an upstream that no longer exists. Git has a name for this state: `[gone]`.
+
+The catch is that Git won't notice on its own. You have to tell it to go and check:
+
+```bash
+git fetch --all --prune
+```
+
+`--prune` is the important half. It deletes the remote-tracking references for branches that no longer exist on the remote. After that runs, every truly dead local branch is flagged `[gone]`, and that flag is the entire basis for the script. Delete the `[gone]` ones, leave everything else alone.
+
+## The script
+
+Here it is in full. I'll walk through it right after.
+
+```bash
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Ensure we're inside a Git repository
+git rev-parse --is-inside-work-tree >/dev/null 2>&1 || {
+    echo "❌ Not inside a Git repository."
+    exit 1
+}
+
+echo "🔄 Fetching and pruning remotes..."
+git fetch --all --prune --quiet
+
+current_branch=$(git branch --show-current)
+
+echo "📍 Current branch: $current_branch"
+echo
+
+deleted=0
+
+while IFS= read -r line; do
+    branch="${line%% *}"
+    status="${line#* }"
+
+    # Skip current branch
+    [[ "$branch" == "$current_branch" ]] && continue
+
+    # Delete branches whose upstream has disappeared
+    if [[ "$status" == "[gone]" ]]; then
+        echo "🗑️  Deleting $branch"
+        git branch -D "$branch"
+        ((deleted++))
+    fi
+done < <(
+    git for-each-ref \
+        --format='%(refname:short) %(upstream:track)' \
+        refs/heads
+)
+
+echo
+
+if [[ $deleted -eq 0 ]]; then
+    echo "✅ No stale local branches found."
+else
+    echo "✅ Deleted $deleted stale local branch(es)."
+fi
+```
+
+Piece by piece:
+
+**The guard.** `set -euo pipefail` makes the script fail loudly instead of limping forward after an error. The `git rev-parse` check bails out early if you run it somewhere that isn't a repo, so you get one clear message instead of a wall of confusing Git output.
+
+**The refresh.** `git fetch --all --prune --quiet` is the `[gone]`-maker from the section above. Skip it and the script will cheerfully report "no stale branches" while your list quietly rots.
+
+**The current branch.** `git branch --show-current` tells us which branch we're standing on, and we skip it. Git won't let you delete the branch you're on anyway, but it's cleaner to never try.
+
+**The loop.** This is the part that does the actual work:
+
+```bash
+git for-each-ref --format='%(refname:short) %(upstream:track)' refs/heads
+```
+
+Think of `for-each-ref` as `git branch` built for scripts — same information, machine-readable, no surprises. `%(refname:short)` is the branch name. `%(upstream:track)` is the tracking status, which is literally the string `[gone]` when the upstream is gone and empty otherwise. So the loop reads each line, and when the status is `[gone]`, the branch gets a `git branch -D` and the counter ticks up.
+
+That's the whole idea. Fetch, prune, find the corpses, bury them.
+
+## Making it feel like a real git command
+
+I could have left this as `clean-branches.sh` and run it with `./clean-branches.sh`. But there's a small Git feature worth knowing that makes it feel native instead.
+
+Git treats any executable named `git-something` on your PATH as a subcommand. Drop a file called `git-hello` on your PATH and `git hello` runs it. There's no magic — when Git doesn't recognize a subcommand as built-in, it goes looking for a matching `git-<name>` executable and runs that.
+
+So I named the file `git-prune-local`, and now I get to type:
+
+```bash
+git prune-local
+```
+
+which reads exactly like the thing it does. That's the whole payoff.
+
+## Set it up yourself
+
+Want the same command? Here's the entire setup. Four steps.
+
+**1. Save the script to `~/bin/git-prune-local`.** No `.sh` extension — the filename *is* the command name.
+
+**2. Make it executable:**
+
+```bash
+chmod +x ~/bin/git-prune-local
+```
+
+**3. Make sure `~/bin` is on your PATH.** Add this line to your `~/.bashrc` (or `~/.zshrc`) if it isn't there already:
+
+```bash
+export PATH="$HOME/bin:$PATH"
+```
+
+**4. Reload your shell** so the change takes effect:
+
+```bash
+source ~/.bashrc
+```
+
+Done. From inside any repo:
+
+```bash
+git prune-local
+```
+
+## One note on safety
+
+The script deletes with `git branch -D`, the force flag, which normally makes me nervous. Here it's fine, and it's worth understanding why.
+
+The only branches it ever touches are the ones marked `[gone]` — branches whose remote counterpart has been deleted, which almost always means the work was merged. A branch you created locally and never pushed has no upstream at all, so it never earns the `[gone]` flag and never gets deleted. Neither does the branch you're currently on. Everything else is left exactly where it was.
+
+Worst case, you delete a `[gone]` branch that still had unmerged commits on it. Even then, Git keeps those commits in the reflog for a while, so `git reflog` plus a `git checkout -b` will bring the branch back. I've never had to. But it's there.
+
+---
+
+Now every couple of days I run `git prune-local`, watch it delete a dozen dead branches, and `git branch` fits on one screen again. It's a small thing. Most of the tools that make a day quietly better are.
