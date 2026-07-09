@@ -6,14 +6,14 @@ export const SITE = {
     "Polyglot software engineer building scalable and efficient systems. Writing about software engineering and AI.",
   locale: "en",
   location: "New Delhi, India",
-  email: "sooditkumar@duck.com",
+  email: "sooditkumarabc@gmail.com",
 } as const;
 
 export const SOCIALS = [
   { label: "GitHub", href: "https://github.com/SooditK" },
   { label: "X", href: "https://x.com/SooditK" },
   { label: "LinkedIn", href: "https://www.linkedin.com/in/soodit-kumar-864a0a1b0" },
-  { label: "Email", href: "mailto:sooditkumar@duck.com" },
+  { label: "Email", href: "mailto:sooditkumarabc@gmail.com" },
 ] as const;
 
 export const WORK = [
@@ -67,6 +67,6 @@ export const PROJECTS = [
   {
     name: "downstash",
     href: "https://github.com/SooditK/downstash",
-    description: "Simplified database management, in TypeScript.",
+    description: "Upstash Redis server written in Rust.",
   },
 ] as const;
